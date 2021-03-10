@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 User = get_user_model()
 
@@ -36,6 +37,17 @@ class CollectionSet(models.Model):
     owner = models.ForeignKey(to=User, on_delete=models.CASCADE,
                               related_name='collection_sets')
     items = models.ManyToManyField(to=Item, related_name='collection_sets', blank=True)
+
+    def add_item(self, item: Item):
+        """Add item to collection set, checking whether the item belongs
+        to collection set owner - if not, raise ValidationError."""
+
+        if item.owner != self.owner:
+            raise ValidationError(
+                message='Collection Set owner and item owner are not the same user.'
+            )
+
+        self.items.add(item)
 
     def __str__(self):
         return f'{self.name} collection set owned by {self.owner}'
