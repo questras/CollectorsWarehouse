@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% for set in collection_sets %}
+        <p>{{ set }}</p>
+    {% endfor %}
+{% endblock %}
